@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 450376134227136188}
   - component: {fileID: 450376134227136191}
   m_Layer: 0
-  m_Name: GPU Graph
+  m_Name: SimulariumPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,11 +41,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 450376134227136190}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb58c44a28b254f55b505f1f35fdd14d, type: 3}
+  m_Script: {fileID: 11500000, guid: 3219cead93c6048dea7fbbf0629a55db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 9d24b6fceaf8e4bca9fbbe9c5957ac11, type: 2}
-  mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   resolution: 10
-  targetFPS: 60
-  totalSteps: 250
+  targetFPS: 90
+  totalSteps: 200
