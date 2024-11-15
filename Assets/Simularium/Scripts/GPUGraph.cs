@@ -6,13 +6,7 @@ public class GPUGraph : MonoBehaviour {
 
 	static readonly int
 		positionsId = Shader.PropertyToID("_Positions"),
-		resolutionId = Shader.PropertyToID("_Resolution"),
-		stepId = Shader.PropertyToID("_Step"),
-		timeId = Shader.PropertyToID("_Time"),
-		transitionProgressId = Shader.PropertyToID("_TransitionProgress");
-
-	[SerializeField]
-	ComputeShader computeShader;
+		stepId = Shader.PropertyToID("_Step");
 
 	[SerializeField]
 	Material material;
@@ -23,79 +17,53 @@ public class GPUGraph : MonoBehaviour {
 	[SerializeField, Range(10, maxResolution)]
 	int resolution = 10;
 
-	[SerializeField]
-	FunctionLibrary.FunctionName function;
-
-	public enum TransitionMode { Cycle, Random }
-
-	[SerializeField]
-	TransitionMode transitionMode;
-
-	[SerializeField, Min(0f)]
-	float functionDuration = 1f, transitionDuration = 1f;
-
-	float duration;
-
-	bool transitioning;
-
-	FunctionLibrary.FunctionName transitionFunction;
-
 	ComputeBuffer positionsBuffer;
+    float currentTime;
+    float playbackDuration = 10f;
 
-	void OnEnable () {
-		positionsBuffer = new ComputeBuffer(maxResolution * maxResolution, 3 * 4);
+	void OnEnable () 
+    {
+		positionsBuffer = new ComputeBuffer( maxResolution * maxResolution, 3 * 4 );
+        UpdatePositionsBuffer( 0 );
 	}
 
-	void OnDisable () {
+	void OnDisable () 
+    {
 		positionsBuffer.Release();
 		positionsBuffer = null;
 	}
 
-	void Update () {
-		duration += Time.deltaTime;
-		if (transitioning) {
-			if (duration >= transitionDuration) {
-				duration -= transitionDuration;
-				transitioning = false;
-			}
-		}
-		else if (duration >= functionDuration) {
-			duration -= functionDuration;
-			transitioning = true;
-			transitionFunction = function;
-			PickNextFunction();
-		}
+    float[,] LoadTestData (float time)
+    {
+        float[,] data = new float[resolution * resolution, 3];
+        for (int i = 0; i < resolution * resolution; i++)
+        {
+            data[i, 0] = Mathf.Floor(i / resolution);
+            data[i, 1] = time;
+            data[i, 2] = i % resolution;
+        }
+        return data;
+    }
 
-		UpdateFunctionOnGPU();
+    void UpdatePositionsBuffer (float time)
+    {
+        positionsBuffer.SetData( LoadTestData( time ) );
+    }
+
+	void Update () 
+    {
+		currentTime += Time.deltaTime;
+		if (currentTime >= playbackDuration) 
+        {
+			currentTime = 0;
+		}
+        UpdatePositionsBuffer( currentTime );
+		UpdateGPU();
 	}
 
-	void PickNextFunction () {
-		function = transitionMode == TransitionMode.Cycle ?
-			FunctionLibrary.GetNextFunctionName(function) :
-			FunctionLibrary.GetRandomFunctionNameOtherThan(function);
-	}
-
-	void UpdateFunctionOnGPU () {
+	void UpdateGPU () 
+    {
 		float step = 2f / resolution;
-		computeShader.SetInt(resolutionId, resolution);
-		computeShader.SetFloat(stepId, step);
-		computeShader.SetFloat(timeId, Time.time);
-		if (transitioning) {
-			computeShader.SetFloat(
-				transitionProgressId,
-				Mathf.SmoothStep(0f, 1f, duration / transitionDuration)
-			);
-		}
-
-		var kernelIndex =
-			(int)function +
-			(int)(transitioning ? transitionFunction : function) *
-			FunctionLibrary.FunctionCount;
-		computeShader.SetBuffer(kernelIndex, positionsId, positionsBuffer);
-
-		int groups = Mathf.CeilToInt(resolution / 8f);
-		computeShader.Dispatch(kernelIndex, groups, groups, 1);
-
 		material.SetBuffer(positionsId, positionsBuffer);
 		material.SetFloat(stepId, step);
 		var bounds = new Bounds(Vector3.zero, Vector3.one * (2f + 2f / resolution));
