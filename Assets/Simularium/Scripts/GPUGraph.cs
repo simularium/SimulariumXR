@@ -6,7 +6,7 @@ public class GPUGraph : MonoBehaviour {
 
 	static readonly int
 		positionsId = Shader.PropertyToID("_Positions"),
-		stepId = Shader.PropertyToID("_Step");
+		scaleId = Shader.PropertyToID("_Scale");
 
 	[SerializeField]
 	Material material;
@@ -17,11 +17,16 @@ public class GPUGraph : MonoBehaviour {
 	[SerializeField, Range(10, maxResolution)]
 	int resolution = 10;
 
-	ComputeBuffer positionsBuffer;
     float currentTime;
-    float playbackDuration = 10f;
+    int currentStep;
+    [SerializeField]
+    int targetFPS = 1;
+    [SerializeField]
+    int totalSteps = 5;
 
-	void OnEnable () 
+    ComputeBuffer positionsBuffer;
+
+    void OnEnable () 
     {
 		positionsBuffer = new ComputeBuffer( maxResolution * maxResolution, 3 * 4 );
         UpdatePositionsBuffer( 0 );
@@ -33,40 +38,40 @@ public class GPUGraph : MonoBehaviour {
 		positionsBuffer = null;
 	}
 
+    void UpdatePositionsBuffer (float time)
+    {
+        positionsBuffer.SetData( LoadTestData( time ) );
+    }
+
     float[,] LoadTestData (float time)
     {
         float[,] data = new float[resolution * resolution, 3];
         for (int i = 0; i < resolution * resolution; i++)
         {
-            data[i, 0] = Mathf.Floor(i / resolution);
+            data[i, 0] = Mathf.Floor( i / resolution );
             data[i, 1] = time;
             data[i, 2] = i % resolution;
         }
         return data;
     }
 
-    void UpdatePositionsBuffer (float time)
-    {
-        positionsBuffer.SetData( LoadTestData( time ) );
-    }
-
 	void Update () 
     {
 		currentTime += Time.deltaTime;
-		if (currentTime >= playbackDuration) 
+		if (currentTime >= 1 / targetFPS) 
         {
 			currentTime = 0;
+            currentStep++;
+            if (currentStep >= totalSteps)
+            {
+                currentStep = 0;
+            }
 		}
-        UpdatePositionsBuffer( currentTime );
-		UpdateGPU();
-	}
-
-	void UpdateGPU () 
-    {
-		float step = 2f / resolution;
-		material.SetBuffer(positionsId, positionsBuffer);
-		material.SetFloat(stepId, step);
-		var bounds = new Bounds(Vector3.zero, Vector3.one * (2f + 2f / resolution));
+		float agentScale = 2f / resolution;
+        UpdatePositionsBuffer( 5f * currentStep / totalSteps );
+		material.SetBuffer( positionsId, positionsBuffer );
+		material.SetFloat( scaleId, agentScale );
+		var bounds = new Bounds( Vector3.zero, Vector3.one * (2f + agentScale) );
 		Graphics.DrawMeshInstancedProcedural(
 			mesh, 0, material, bounds, resolution * resolution
 		);

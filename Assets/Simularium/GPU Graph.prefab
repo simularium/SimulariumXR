@@ -47,3 +47,5 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: 9d24b6fceaf8e4bca9fbbe9c5957ac11, type: 2}
   mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   resolution: 10
+  targetFPS: 60
+  totalSteps: 250
