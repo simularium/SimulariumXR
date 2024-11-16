@@ -4,7 +4,7 @@ namespace Simularium
 {
     public class Player : MonoBehaviour {
 
-        const int maxResolution = 1000;
+        public Dataset dataset;
 
         static readonly int
             positionsId = Shader.PropertyToID("_Positions"),
@@ -16,21 +16,18 @@ namespace Simularium
         [SerializeField]
         Mesh mesh;
 
-        [SerializeField, Range(10, maxResolution)]
-        int resolution = 10;
-
         float currentTime;
         int currentStep;
         [SerializeField]
         int targetFPS = 1;
-        [SerializeField]
-        int totalSteps = 5;
 
         ComputeBuffer positionsBuffer;
 
         void OnEnable () 
         {
-            positionsBuffer = new ComputeBuffer( maxResolution * maxResolution, 3 * 4 );
+            Debug.Log( dataset.positions.Count );
+
+            positionsBuffer = new ComputeBuffer( Dataset.MAX_AGENTS, 3 * 4 );
             UpdatePositionsBuffer( 0 );
         }
 
@@ -40,21 +37,9 @@ namespace Simularium
             positionsBuffer = null;
         }
 
-        void UpdatePositionsBuffer (float time)
+        void UpdatePositionsBuffer (int time)
         {
-            positionsBuffer.SetData( LoadTestData( time ) );
-        }
-
-        float[,] LoadTestData (float time)
-        {
-            float[,] data = new float[resolution * resolution, 3];
-            for (int i = 0; i < resolution * resolution; i++)
-            {
-                data[i, 0] = Mathf.Floor( i / resolution );
-                data[i, 1] = time;
-                data[i, 2] = i % resolution;
-            }
-            return data;
+            positionsBuffer.SetData( dataset.positions[time] );
         }
 
         void Update () 
@@ -64,18 +49,18 @@ namespace Simularium
             {
                 currentTime = 0;
                 currentStep++;
-                if (currentStep >= totalSteps)
+                if (currentStep >= dataset.totalSteps)
                 {
                     currentStep = 0;
                 }
             }
-            float agentScale = 2f / resolution;
-            UpdatePositionsBuffer( 5f * currentStep / totalSteps );
+            
+            UpdatePositionsBuffer( currentStep );
             material.SetBuffer( positionsId, positionsBuffer );
-            material.SetFloat( scaleId, agentScale );
-            var bounds = new Bounds( Vector3.zero, Vector3.one * (2f + agentScale) );
+            material.SetFloat( scaleId, dataset.agentScale );
+            var bounds = new Bounds( Vector3.zero, Vector3.one * (2f + dataset.agentScale) );
             Graphics.DrawMeshInstancedProcedural(
-                mesh, 0, material, bounds, resolution * resolution
+                mesh, 0, material, bounds, dataset.nAgents[currentStep]
             );
         }
     }
