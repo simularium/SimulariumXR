@@ -7,5 +7,6 @@ namespace Simularium
     public class FrameData
     {
         public float[] positions;
+        public float[] radii;
     }
 }

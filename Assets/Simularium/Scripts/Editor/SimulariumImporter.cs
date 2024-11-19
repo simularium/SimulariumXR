@@ -52,18 +52,20 @@ namespace Simularium
 
             asset.totalSteps = totalSteps;
             asset.nAgents = new int[totalSteps];
-            asset.agentScale = 2f / resolution;
             asset.frames = new List<FrameData>();
             for (int t = 0; t < totalSteps; t++)
             {
-                asset.nAgents[t] = resolution * resolution;
+                int nAgents = resolution * resolution;
+                asset.nAgents[t] = nAgents;
                 FrameData frame = new FrameData();
-                frame.positions = new float[resolution * resolution * 3];
-                for (int i = 0; i < resolution * resolution; i++)
+                frame.positions = new float[nAgents * 3];
+                frame.radii = new float[nAgents];
+                for (int i = 0; i < nAgents; i++)
                 {
                     frame.positions[3 * i] = Mathf.Floor( i / (float)resolution );
                     frame.positions[3 * i + 1] = 5f * t / (float)totalSteps;
                     frame.positions[3 * i + 2] = i % resolution;
+                    frame.radii[i] = i / (float)nAgents;
                 }
                 asset.frames.Add( frame );
             }

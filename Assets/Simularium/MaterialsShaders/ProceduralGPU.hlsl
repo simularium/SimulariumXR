@@ -1,8 +1,7 @@
 #if defined(UNITY_PROCEDURAL_INSTANCING_ENABLED)
 	StructuredBuffer<float> _Positions;
+	StructuredBuffer<float> _Scales;
 #endif
-
-float _Scale;
 
 void ConfigureProcedural () {
 	#if defined(UNITY_PROCEDURAL_INSTANCING_ENABLED)
@@ -13,7 +12,7 @@ void ConfigureProcedural () {
             _Positions[3 * unity_InstanceID + 2], 
             1.0
         );
-		unity_ObjectToWorld._m00_m11_m22 = _Scale;
+		unity_ObjectToWorld._m00_m11_m22 = _Scales[unity_InstanceID];
 	#endif
 }
 

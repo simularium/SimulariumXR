@@ -2,13 +2,13 @@ using UnityEngine;
 
 namespace Simularium
 {
-    public class Player : MonoBehaviour {
-
+    public class Player : MonoBehaviour 
+    {
         public Dataset dataset;
 
         static readonly int
             positionsId = Shader.PropertyToID("_Positions"),
-            scaleId = Shader.PropertyToID("_Scale");
+            scalesId = Shader.PropertyToID("_Scales");
 
         [SerializeField]
         Material material;
@@ -22,22 +22,27 @@ namespace Simularium
         int targetFPS = 1;
 
         ComputeBuffer positionsBuffer;
+        ComputeBuffer radiiBuffer;
 
         void OnEnable () 
         {
             positionsBuffer = new ComputeBuffer( Dataset.MAX_AGENTS * 3, 4 );
-            UpdatePositionsBuffer( 0 );
+            radiiBuffer = new ComputeBuffer( Dataset.MAX_AGENTS, 4 );
+            UpdateBuffers( 0 );
         }
 
         void OnDisable () 
         {
             positionsBuffer.Release();
             positionsBuffer = null;
+            radiiBuffer.Release();
+            radiiBuffer = null;
         }
 
-        void UpdatePositionsBuffer (int ixTime)
+        void UpdateBuffers (int ixTime)
         {
             positionsBuffer.SetData( dataset.frames[ixTime].positions );
+            radiiBuffer.SetData( dataset.frames[ixTime].radii );
         }
 
         void Update () 
@@ -53,10 +58,10 @@ namespace Simularium
                 }
             }
             
-            UpdatePositionsBuffer( currentStep );
+            UpdateBuffers( currentStep );
             material.SetBuffer( positionsId, positionsBuffer );
-            material.SetFloat( scaleId, dataset.agentScale );
-            var bounds = new Bounds( Vector3.zero, Vector3.one * (2f + dataset.agentScale) );
+            material.SetBuffer( scalesId, radiiBuffer );
+            var bounds = new Bounds( Vector3.zero, 6f * Vector3.one );
             Graphics.DrawMeshInstancedProcedural(
                 mesh, 0, material, bounds, dataset.nAgents[currentStep]
             );
