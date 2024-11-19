@@ -19,24 +19,26 @@ namespace Simularium
             GUILayout.BeginHorizontal();
 
             GUILayout.Label("Simularium Importer", EditorStyles.boldLabel);
+            
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
 
             if (GUILayout.Button("Generate Test data")) 
             {
                 dataset = GenerateTestData();
             }
-            if (dataset)
-            {
-                GUILayout.Label ("Created dataset asset.");
-            }
-
-            GUILayout.Space( 20 );
             
             GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
 
-            if (GUI.changed) 
+            if (dataset)
             {
-                EditorUtility.SetDirty( dataset );
+                GUILayout.Label ("Created test Dataset.");
+                EditorUtility.FocusProjectWindow();
+                Selection.activeObject = dataset;
             }
+            
+            GUILayout.EndHorizontal();
         }
 
         Dataset GenerateTestData ()
@@ -45,25 +47,28 @@ namespace Simularium
             int resolution = 10;
 
             Dataset asset = ScriptableObject.CreateInstance<Dataset>();
+            AssetDatabase.CreateAsset(asset, "Assets/Simularium/Data/TestDataset.asset");
+            AssetDatabase.SaveAssets();
 
             asset.totalSteps = totalSteps;
             asset.nAgents = new int[totalSteps];
-            asset.positions = new List<float[,]>();
+            asset.agentScale = 2f / resolution;
+            asset.frames = new List<FrameData>();
             for (int t = 0; t < totalSteps; t++)
             {
                 asset.nAgents[t] = resolution * resolution;
-                asset.positions.Add( new float[resolution * resolution, 3] );
+                FrameData frame = new FrameData();
+                frame.positions = new float[resolution * resolution * 3];
                 for (int i = 0; i < resolution * resolution; i++)
                 {
-                    asset.positions[t][i, 0] = Mathf.Floor( i / (float)resolution );
-                    asset.positions[t][i, 1] = 5f * t / (float)totalSteps;
-                    asset.positions[t][i, 2] = i % resolution;
+                    frame.positions[3 * i] = Mathf.Floor( i / (float)resolution );
+                    frame.positions[3 * i + 1] = 5f * t / (float)totalSteps;
+                    frame.positions[3 * i + 2] = i % resolution;
                 }
+                asset.frames.Add( frame );
             }
-            asset.agentScale = 2f / resolution;
 
-            AssetDatabase.CreateAsset(asset, "Assets/Simularium/Data/Test.asset");
-            AssetDatabase.SaveAssets();
+            EditorUtility.SetDirty( asset );
 
             return asset;
         }

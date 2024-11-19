@@ -16,7 +16,7 @@ namespace Simularium
         [SerializeField]
         Mesh mesh;
 
-        float currentTime;
+        float stepTime;
         int currentStep;
         [SerializeField]
         int targetFPS = 1;
@@ -25,9 +25,7 @@ namespace Simularium
 
         void OnEnable () 
         {
-            Debug.Log( dataset.positions.Count );
-
-            positionsBuffer = new ComputeBuffer( Dataset.MAX_AGENTS, 3 * 4 );
+            positionsBuffer = new ComputeBuffer( Dataset.MAX_AGENTS * 3, 4 );
             UpdatePositionsBuffer( 0 );
         }
 
@@ -37,17 +35,17 @@ namespace Simularium
             positionsBuffer = null;
         }
 
-        void UpdatePositionsBuffer (int time)
+        void UpdatePositionsBuffer (int ixTime)
         {
-            positionsBuffer.SetData( dataset.positions[time] );
+            positionsBuffer.SetData( dataset.frames[ixTime].positions );
         }
 
         void Update () 
         {
-            currentTime += Time.deltaTime;
-            if (currentTime >= 1 / targetFPS) 
+            stepTime += Time.deltaTime;
+            if (stepTime >= 1 / (float)targetFPS) 
             {
-                currentTime = 0;
+                stepTime = 0;
                 currentStep++;
                 if (currentStep >= dataset.totalSteps)
                 {

@@ -74,4 +74,7 @@ crashlytics-build.properties
 # VR samples
 /[Aa]ssets/[Ss]amples/*
 
+# Datasets
+/[Aa]ssets/[Ss]imularium/[Dd]ata/*
+
 *.DS_Store

@@ -1,15 +1,18 @@
 #if defined(UNITY_PROCEDURAL_INSTANCING_ENABLED)
-	StructuredBuffer<float3> _Positions;
+	StructuredBuffer<float> _Positions;
 #endif
 
 float _Scale;
 
 void ConfigureProcedural () {
 	#if defined(UNITY_PROCEDURAL_INSTANCING_ENABLED)
-		float3 position = _Positions[unity_InstanceID];
-
 		unity_ObjectToWorld = 0.0;
-		unity_ObjectToWorld._m03_m13_m23_m33 = float4(position, 1.0);
+		unity_ObjectToWorld._m03_m13_m23_m33 = float4(
+            _Positions[3 * unity_InstanceID], 
+            _Positions[3 * unity_InstanceID + 1], 
+            _Positions[3 * unity_InstanceID + 2], 
+            1.0
+        );
 		unity_ObjectToWorld._m00_m11_m22 = _Scale;
 	#endif
 }
