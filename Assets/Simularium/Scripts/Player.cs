@@ -7,8 +7,7 @@ namespace Simularium
         public Dataset dataset;
 
         static readonly int
-            colorAId = Shader.PropertyToID("_ColorA"),
-            colorBId = Shader.PropertyToID("_ColorB"),
+            colorId = Shader.PropertyToID("_Color"),
             transformsId = Shader.PropertyToID("_Transforms");
 
         static MaterialPropertyBlock propertyBlock;
@@ -60,13 +59,12 @@ namespace Simularium
             
             UpdateBuffers( currentStep );
 
-			propertyBlock.SetColor(colorAId, Color.white);
-			propertyBlock.SetColor(colorBId, Color.black);
-			propertyBlock.SetBuffer( transformsId, transformsBuffer );
+            propertyBlock.SetColor(colorId, Color.blue);
+            propertyBlock.SetBuffer( transformsId, transformsBuffer );
             var bounds = new Bounds( Vector3.zero, 6f * Vector3.one );
             Graphics.DrawMeshInstancedProcedural(
-				mesh, 0, material, bounds, dataset.nAgents[currentStep], propertyBlock
-			);
+                mesh, 0, material, bounds, dataset.nAgents[currentStep], propertyBlock
+            );
         }
     }
 }
