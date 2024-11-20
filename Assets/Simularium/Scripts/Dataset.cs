@@ -10,12 +10,12 @@ namespace Simularium
 
         public int totalSteps;
         public int[] nAgents;
-        public Dictionary<string, AgentDisplayData> displayData;
+        public Dictionary<string, DisplayData> displayData;
         public List<FrameData> frames;
     }
 
     [System.Serializable]
-    public class AgentDisplayData
+    public class DisplayData
     {
         public Mesh mesh;
         public Color color;

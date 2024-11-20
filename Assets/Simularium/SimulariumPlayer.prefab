@@ -45,6 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dataset: {fileID: 11400000, guid: 4a52d3a71437242b28a0449613a7f46f, type: 2}
-  material: {fileID: 2100000, guid: 617ae3881a9784d3a8e13e9d150ec306, type: 2}
+  material: {fileID: 2100000, guid: 7fbd19cc462be415592a3ad483eb4429, type: 2}
   mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  targetFPS: 10
+  targetFPS: 100

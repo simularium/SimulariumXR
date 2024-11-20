@@ -186,13 +186,8 @@ PrefabInstance:
         type: 3}
       propertyPath: dataset
       value: 
-      objectReference: {fileID: 11400000, guid: 4a52d3a71437242b28a0449613a7f46f,
+      objectReference: {fileID: 11400000, guid: 6ff7b39b7f31644c4b2eab10b6b5eff8,
         type: 2}
-    - target: {fileID: 450376134227136191, guid: b53f6dd54af0f444f9a3a40a126c1d80,
-        type: 3}
-      propertyPath: material
-      value: 
-      objectReference: {fileID: 2100000, guid: 7fbd19cc462be415592a3ad483eb4429, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -399,8 +394,8 @@ Camera:
   m_GameObject: {fileID: 961739749}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.16037738, g: 0.16037738, b: 0.16037738, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
