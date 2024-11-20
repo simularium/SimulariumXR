@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Fractal URP
+  m_Name: SimulariumGPU
   m_Shader: {fileID: -6465566751694194690, guid: 58d8ae11d06324080ac7df4b3d921900,
     type: 3}
   m_Parent: {fileID: 0}
