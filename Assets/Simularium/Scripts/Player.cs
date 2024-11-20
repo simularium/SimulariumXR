@@ -7,8 +7,11 @@ namespace Simularium
         public Dataset dataset;
 
         static readonly int
-            positionsId = Shader.PropertyToID("_Positions"),
-            scalesId = Shader.PropertyToID("_Scales");
+            colorAId = Shader.PropertyToID("_ColorA"),
+            colorBId = Shader.PropertyToID("_ColorB"),
+            transformsId = Shader.PropertyToID("_Transforms");
+
+        static MaterialPropertyBlock propertyBlock;
 
         [SerializeField]
         Material material;
@@ -21,28 +24,25 @@ namespace Simularium
         [SerializeField]
         int targetFPS = 1;
 
-        ComputeBuffer positionsBuffer;
-        ComputeBuffer radiiBuffer;
+        ComputeBuffer transformsBuffer;
 
         void OnEnable () 
         {
-            positionsBuffer = new ComputeBuffer( Dataset.MAX_AGENTS * 3, 4 );
-            radiiBuffer = new ComputeBuffer( Dataset.MAX_AGENTS, 4 );
+            transformsBuffer = new ComputeBuffer( Dataset.MAX_AGENTS * 12, 4 );
             UpdateBuffers( 0 );
+
+            propertyBlock ??= new MaterialPropertyBlock();
         }
 
         void OnDisable () 
         {
-            positionsBuffer.Release();
-            positionsBuffer = null;
-            radiiBuffer.Release();
-            radiiBuffer = null;
+            transformsBuffer.Release();
+            transformsBuffer = null;
         }
 
         void UpdateBuffers (int ixTime)
         {
-            positionsBuffer.SetData( dataset.frames[ixTime].positions );
-            radiiBuffer.SetData( dataset.frames[ixTime].radii );
+            transformsBuffer.SetData( dataset.frames[ixTime].transforms );
         }
 
         void Update () 
@@ -59,12 +59,14 @@ namespace Simularium
             }
             
             UpdateBuffers( currentStep );
-            material.SetBuffer( positionsId, positionsBuffer );
-            material.SetBuffer( scalesId, radiiBuffer );
+
+			propertyBlock.SetColor(colorAId, Color.white);
+			propertyBlock.SetColor(colorBId, Color.black);
+			propertyBlock.SetBuffer( transformsId, transformsBuffer );
             var bounds = new Bounds( Vector3.zero, 6f * Vector3.one );
             Graphics.DrawMeshInstancedProcedural(
-                mesh, 0, material, bounds, dataset.nAgents[currentStep]
-            );
+				mesh, 0, material, bounds, dataset.nAgents[currentStep], propertyBlock
+			);
         }
     }
 }

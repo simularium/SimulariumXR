@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using Unity.Mathematics;
 
 namespace Simularium
 {
@@ -26,6 +27,8 @@ namespace Simularium
             if (GUILayout.Button("Generate Test data")) 
             {
                 dataset = GenerateTestData();
+                EditorUtility.FocusProjectWindow();
+                Selection.activeObject = dataset;
             }
             
             GUILayout.EndHorizontal();
@@ -34,8 +37,6 @@ namespace Simularium
             if (dataset)
             {
                 GUILayout.Label ("Created test Dataset.");
-                EditorUtility.FocusProjectWindow();
-                Selection.activeObject = dataset;
             }
             
             GUILayout.EndHorizontal();
@@ -58,14 +59,35 @@ namespace Simularium
                 int nAgents = resolution * resolution;
                 asset.nAgents[t] = nAgents;
                 FrameData frame = new FrameData();
-                frame.positions = new float[nAgents * 3];
-                frame.radii = new float[nAgents];
+                frame.transforms = new float[nAgents * 12];
+                frame.colors = new float[nAgents * 4];
+                float angle = (360f / (float)totalSteps) * t;
                 for (int i = 0; i < nAgents; i++)
                 {
-                    frame.positions[3 * i] = Mathf.Floor( i / (float)resolution );
-                    frame.positions[3 * i + 1] = 5f * t / (float)totalSteps;
-                    frame.positions[3 * i + 2] = i % resolution;
-                    frame.radii[i] = i / (float)nAgents;
+                    // transform matrices
+                    Vector3 position = new Vector3(
+                        2f * Mathf.Floor( i / (float)resolution ),
+                        5f * t / (float)totalSteps,
+                        2f * (i % resolution)
+                    );
+                    Quaternion rotation = Quaternion.AngleAxis( 
+                        angle + (360f / (float)nAgents) * i, 
+                        Vector3.up
+                    );
+                    float scale = i / (float)nAgents;
+
+                    float3x3 r = new float3x3(rotation) * scale;
+                    float3x4 matrix = new float3x4(r.c0, r.c1, r.c2, position);
+                    for (int n = 0; n < 12; n++)
+                    {
+                        frame.transforms[12 * i + n] = matrix[n % 4][Mathf.FloorToInt( n / 4f )];
+                    }
+                    
+                    // colors
+                    frame.colors[4 * i] = i / (float)nAgents;
+                    frame.colors[4 * i + 1] = 0;
+                    frame.colors[4 * i + 2] = 0;
+                    frame.colors[4 * i + 3] = 1f;
                 }
                 asset.frames.Add( frame );
             }

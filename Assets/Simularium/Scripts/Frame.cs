@@ -6,7 +6,7 @@ namespace Simularium
     [System.Serializable]
     public class FrameData
     {
-        public float[] positions;
-        public float[] radii;
+        public float[] transforms;
+        public float[] colors;
     }
 }

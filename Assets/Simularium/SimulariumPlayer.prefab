@@ -44,8 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3219cead93c6048dea7fbbf0629a55db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 9d24b6fceaf8e4bca9fbbe9c5957ac11, type: 2}
-  mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-  resolution: 10
-  targetFPS: 90
-  totalSteps: 200
+  dataset: {fileID: 11400000, guid: 4a52d3a71437242b28a0449613a7f46f, type: 2}
+  material: {fileID: 2100000, guid: 617ae3881a9784d3a8e13e9d150ec306, type: 2}
+  mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  targetFPS: 10
