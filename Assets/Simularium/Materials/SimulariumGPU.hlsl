@@ -30,12 +30,12 @@ float4 GetAgentColor () {
 	#endif
 }
 
-void ShaderGraphFunction_float (float3 In, out float3 Out, out float4 FractalColor) {
+void ShaderGraphFunction_float (float3 In, out float3 Out, out float4 Color) {
 	Out = In;
-	FractalColor = GetAgentColor();
+	Color = GetAgentColor();
 }
 
-void ShaderGraphFunction_half (half3 In, out half3 Out, out half4 FractalColor) {
+void ShaderGraphFunction_half (half3 In, out half3 Out, out half4 Color) {
 	Out = In;
-	FractalColor = GetAgentColor();
+	Color = GetAgentColor();
 }

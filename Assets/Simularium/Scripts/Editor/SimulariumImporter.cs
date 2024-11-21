@@ -82,7 +82,7 @@ namespace Simularium
 
         Dataset GenerateTestData ()
         {
-            int totalSteps = 10;
+            int totalSteps = 200;
             int resolution = 10;
 
             Dataset asset = ScriptableObject.CreateInstance<Dataset>();
@@ -106,7 +106,7 @@ namespace Simularium
                     // transform matrices
                     Vector3 position = new Vector3(
                         2f * Mathf.Floor( i / (float)resolution ),
-                        5f * t / (float)totalSteps,
+                        10f * t / (float)totalSteps,
                         2f * (i % resolution)
                     );
                     Quaternion rotation = Quaternion.AngleAxis( 
