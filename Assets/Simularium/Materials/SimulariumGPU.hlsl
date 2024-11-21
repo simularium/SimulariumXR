@@ -1,5 +1,6 @@
 #if defined(UNITY_PROCEDURAL_INSTANCING_ENABLED)
 	StructuredBuffer<float> _Transforms;
+	StructuredBuffer<float> _Colors;
 #endif
 
 void ConfigureProcedural () {
@@ -16,11 +17,14 @@ void ConfigureProcedural () {
 	#endif
 }
 
-float4 _Color;
-
-float4 GetFractalColor () {
+float4 GetAgentColor () {
 	#if defined(UNITY_PROCEDURAL_INSTANCING_ENABLED)
-		return _Color;
+		return float4(
+            _Colors[3 * unity_InstanceID],
+            _Colors[3 * unity_InstanceID + 1],
+            _Colors[3 * unity_InstanceID + 2],
+            1.0
+        );
 	#else
 		return float4(1.0, 0.0, 1.0, 1.0);
 	#endif
@@ -28,10 +32,10 @@ float4 GetFractalColor () {
 
 void ShaderGraphFunction_float (float3 In, out float3 Out, out float4 FractalColor) {
 	Out = In;
-	FractalColor = GetFractalColor();
+	FractalColor = GetAgentColor();
 }
 
 void ShaderGraphFunction_half (half3 In, out half3 Out, out half4 FractalColor) {
 	Out = In;
-	FractalColor = GetFractalColor();
+	FractalColor = GetAgentColor();
 }

@@ -9,6 +9,27 @@ namespace Simularium
 
         public Dataset dataset;
 
+        Color[] colors = null;
+        string[] hexColors = new string[] {
+            "#fee34d",
+            "#f7b232",
+            "#bf5736",
+            "#94a7fc",
+            "#ce8ec9",
+            "#58606c",
+            "#0ba345",
+            "#9267cb",
+            "#81dbe6",
+            "#bd7800",
+            "#bbbb99",
+            "#5b79f0",
+            "#89a500",
+            "#da8692",
+            "#418463",
+            "#9f516c",
+            "#00aabf"
+        };
+
         [MenuItem( "Window/Simularium Importer" )]
         static void Init () 
         {
@@ -42,6 +63,23 @@ namespace Simularium
             GUILayout.EndHorizontal();
         }
 
+        void ConvertColors () 
+        {
+            colors = new Color[hexColors.Length];
+            for (int i = 0; i < hexColors.Length; i++)
+            {
+                Color color;
+                if (ColorUtility.TryParseHtmlString( hexColors[i], out color ))
+                {
+                    colors[i] = color;
+                }
+                else 
+                {
+                    colors[i] = new Color( 1.0f, 1.0f, 1.0f, 1.0f );
+                }
+            }
+        }
+
         Dataset GenerateTestData ()
         {
             int totalSteps = 10;
@@ -54,13 +92,14 @@ namespace Simularium
             asset.totalSteps = totalSteps;
             asset.nAgents = new int[totalSteps];
             asset.frames = new List<FrameData>();
+            ConvertColors();
             for (int t = 0; t < totalSteps; t++)
             {
                 int nAgents = resolution * resolution;
                 asset.nAgents[t] = nAgents;
                 FrameData frame = new FrameData();
                 frame.transforms = new float[nAgents * 12];
-                frame.colors = new float[nAgents * 4];
+                frame.colors = new float[nAgents * 3];
                 float angle = (360f / (float)totalSteps) * t;
                 for (int i = 0; i < nAgents; i++)
                 {
@@ -84,10 +123,10 @@ namespace Simularium
                     }
                     
                     // colors
-                    frame.colors[4 * i] = i / (float)nAgents;
-                    frame.colors[4 * i + 1] = 0;
-                    frame.colors[4 * i + 2] = 0;
-                    frame.colors[4 * i + 3] = 1f;
+                    Color color = colors[i % colors.Length];
+                    frame.colors[3 * i] = color.r;
+                    frame.colors[3 * i + 1] = color.g;
+                    frame.colors[3 * i + 2] = color.b;
                 }
                 asset.frames.Add( frame );
             }
