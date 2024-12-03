@@ -2,12 +2,15 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using System.IO;
 
 namespace Simularium
 {
     public class SimulariumImporter : EditorWindow {
 
         public Dataset dataset;
+
+        string error = "";
 
         Color[] colors = null;
         string[] hexColors = new string[] {
@@ -40,12 +43,12 @@ namespace Simularium
         {
             GUILayout.BeginHorizontal();
 
-            GUILayout.Label("Simularium Importer", EditorStyles.boldLabel);
+            GUILayout.Label( "Simularium Importer", EditorStyles.boldLabel );
             
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button("Generate Test data")) 
+            if (GUILayout.Button( "Generate Test data" )) 
             {
                 dataset = GenerateTestData();
                 EditorUtility.FocusProjectWindow();
@@ -57,9 +60,29 @@ namespace Simularium
 
             if (dataset)
             {
-                GUILayout.Label ("Created test Dataset.");
+                GUILayout.Label( "Created test Dataset." );
             }
             
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button( "Import Simularium File" )) 
+            {
+                string path = EditorUtility.OpenFilePanel( "Choose Simularium file", "", "simularium" );
+                if (path.Length != 0)
+                {
+                    error = Parser.ParseSimulariumFile( path );
+                }
+            }
+            
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            
+            if (error.Length != 0)
+            {
+                GUILayout.Label( error );
+            }
+
             GUILayout.EndHorizontal();
         }
 
