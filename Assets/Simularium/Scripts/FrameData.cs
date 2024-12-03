@@ -8,6 +8,7 @@ namespace Simularium
     {
         [HideInInspector]
         public float[] transforms;
+        [HideInInspector]
         public float[] colors;
     }
 }

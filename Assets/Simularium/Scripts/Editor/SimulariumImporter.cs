@@ -82,15 +82,20 @@ namespace Simularium
 
         Dataset GenerateTestData ()
         {
-            int totalSteps = 200;
+            int totalSteps = 10;
             int resolution = 10;
 
             Dataset asset = ScriptableObject.CreateInstance<Dataset>();
-            AssetDatabase.CreateAsset(asset, "Assets/Simularium/Data/TestDataset.asset");
-            AssetDatabase.SaveAssets();
+            string path = "Assets/Simularium/Data/";
+            if (!AssetDatabase.IsValidFolder( path + "Resources" )) {
+                AssetDatabase.CreateFolder( "Assets/Simularium/Data", "Resources" );
+            }
+            AssetDatabase.CreateAsset( asset, path + "TestDataset.asset" );
 
+            asset.name = "TestDataset";
             asset.totalSteps = totalSteps;
             asset.nAgents = new int[totalSteps];
+            asset.lineColor = new Color( 0.6f, 1.0f, 0.8f, 1.0f );
             asset.frames = new List<FrameData>();
             ConvertColors();
             for (int t = 0; t < totalSteps; t++)
@@ -128,9 +133,32 @@ namespace Simularium
                     frame.colors[3 * i + 1] = color.g;
                     frame.colors[3 * i + 2] = color.b;
                 }
+                
+                // lines
+                Mesh lineMesh = new Mesh();
+                float z = 10f * t / (float)totalSteps;
+                Vector3[] points = new Vector3[] {
+                    new Vector3( 0.0f, 0.0f, z ),
+                    new Vector3( 20.0f, 20.0f, z ),
+                    new Vector3( 20.0f, 20.0f, z ),
+                    new Vector3( 0.0f, 20.0f, z ),
+                    new Vector3( 0.0f, 20.0f, z ),
+                    new Vector3( 20.0f, 0.0f, z ),
+                    new Vector3( 20.0f, 0.0f, z ),
+                    new Vector3( 0.0f, 0.0f, z ),
+                };
+                int[] ixs = new int[] {
+                    0, 1, 2, 3, 4, 5, 6, 7
+                };
+                lineMesh.vertices = points;
+                lineMesh.SetIndices( ixs, MeshTopology.Lines, 0 );
+                MeshUtility.Optimize( lineMesh );
+                AssetDatabase.CreateAsset( lineMesh, path + "Resources/TestDataset_Mesh_" + t + ".asset" );
+
                 asset.frames.Add( frame );
             }
 
+            AssetDatabase.SaveAssets();
             EditorUtility.SetDirty( asset );
 
             return asset;

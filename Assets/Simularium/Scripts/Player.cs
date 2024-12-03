@@ -18,6 +18,9 @@ namespace Simularium
         [SerializeField]
         Mesh mesh;
 
+        Mesh[] lineMeshes;
+        MeshFilter lineRenderer;
+
         float stepTime;
         int currentStep;
         [SerializeField]
@@ -28,11 +31,13 @@ namespace Simularium
 
         void OnEnable () 
         {
+            LoadLineRenderers();
+
             transformsBuffer = new ComputeBuffer( Dataset.MAX_AGENTS * 12, 4 );
             colorsBuffer = new ComputeBuffer( Dataset.MAX_AGENTS * 3, 4 );
-            UpdateBuffers( 0 );
-
             propertyBlock ??= new MaterialPropertyBlock();
+
+            SetCurrentFrame( 0 );
         }
 
         void OnDisable () 
@@ -43,10 +48,24 @@ namespace Simularium
             colorsBuffer = null;
         }
 
-        void UpdateBuffers (int ixTime)
+        void LoadLineRenderers ()
         {
-            transformsBuffer.SetData( dataset.frames[ixTime].transforms );
-            colorsBuffer.SetData( dataset.frames[ixTime].colors );
+            lineRenderer = (Instantiate( Resources.Load( "LineMesh", typeof(GameObject) ) ) as GameObject).GetComponent<MeshFilter>();
+            lineMeshes = new Mesh[dataset.totalSteps];
+            for (int t = 0; t < dataset.totalSteps; t++) 
+            {
+                lineMeshes[t] = Resources.Load<Mesh>( dataset.name + "_Mesh_" + t );
+            }
+        }
+
+        void SetCurrentFrame (int t)
+        {
+            transformsBuffer.SetData( dataset.frames[t].transforms );
+            colorsBuffer.SetData( dataset.frames[t].colors );
+            propertyBlock.SetBuffer( transformsId, transformsBuffer );
+            propertyBlock.SetBuffer( colorsId, colorsBuffer );
+
+            lineRenderer.mesh = lineMeshes[t];
         }
 
         void Update () 
@@ -61,9 +80,7 @@ namespace Simularium
                     currentStep = 0;
                 }
 
-                UpdateBuffers( currentStep );
-                propertyBlock.SetBuffer( transformsId, transformsBuffer );
-                propertyBlock.SetBuffer( colorsId, colorsBuffer );
+                SetCurrentFrame( currentStep );
             }
 
             Bounds bounds = new Bounds( Vector3.zero, 6f * Vector3.one );
