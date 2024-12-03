@@ -7,8 +7,8 @@ namespace Simularium
     public class FrameData
     {
         [HideInInspector]
-        public float[] transforms;
+        public float[] meshTransforms;
         [HideInInspector]
-        public float[] colors;
+        public float[] meshColors;
     }
 }

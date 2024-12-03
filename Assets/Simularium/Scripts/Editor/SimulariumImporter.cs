@@ -94,59 +94,70 @@ namespace Simularium
 
             asset.name = "TestDataset";
             asset.totalSteps = totalSteps;
-            asset.nAgents = new int[totalSteps];
+            asset.nMeshAgents = new int[totalSteps];
+            asset.hasLines = true;
             asset.lineColor = new Color( 0.6f, 1.0f, 0.8f, 1.0f );
+            asset.lineThickness = 1.0f;
             asset.frames = new List<FrameData>();
             ConvertColors();
             for (int t = 0; t < totalSteps; t++)
             {
-                int nAgents = resolution * resolution;
-                asset.nAgents[t] = nAgents;
+                int nMeshAgents = resolution * resolution;
+                asset.nMeshAgents[t] = nMeshAgents;
                 FrameData frame = new FrameData();
-                frame.transforms = new float[nAgents * 12];
-                frame.colors = new float[nAgents * 3];
+                frame.meshTransforms = new float[nMeshAgents * 12];
+                frame.meshColors = new float[nMeshAgents * 3];
                 float angle = (360f / (float)totalSteps) * t;
-                for (int i = 0; i < nAgents; i++)
+                for (int i = 0; i < nMeshAgents; i++)
                 {
-                    // transform matrices
+                    // mesh transform matrices
                     Vector3 position = new Vector3(
                         2f * Mathf.Floor( i / (float)resolution ),
                         10f * t / (float)totalSteps,
                         2f * (i % resolution)
                     );
                     Quaternion rotation = Quaternion.AngleAxis( 
-                        angle + (360f / (float)nAgents) * i, 
+                        angle + (360f / (float)nMeshAgents) * i, 
                         Vector3.up
                     );
-                    float scale = i / (float)nAgents;
+                    float scale = i / (float)nMeshAgents;
 
                     float3x3 r = new float3x3(rotation) * scale;
                     float3x4 matrix = new float3x4(r.c0, r.c1, r.c2, position);
                     for (int n = 0; n < 12; n++)
                     {
-                        frame.transforms[12 * i + n] = matrix[n % 4][Mathf.FloorToInt( n / 4f )];
+                        frame.meshTransforms[12 * i + n] = matrix[n % 4][Mathf.FloorToInt( n / 4f )];
                     }
                     
-                    // colors
+                    // mesh colors
                     Color color = colors[i % colors.Length];
-                    frame.colors[3 * i] = color.r;
-                    frame.colors[3 * i + 1] = color.g;
-                    frame.colors[3 * i + 2] = color.b;
+                    frame.meshColors[3 * i] = color.r;
+                    frame.meshColors[3 * i + 1] = color.g;
+                    frame.meshColors[3 * i + 2] = color.b;
                 }
                 
                 // lines
                 Mesh lineMesh = new Mesh();
                 float z = 10f * t / (float)totalSteps;
-                Vector3[] points = new Vector3[] {
+                Vector3[] rawPoints = new Vector3[] {
                     new Vector3( 0.0f, 0.0f, z ),
                     new Vector3( 20.0f, 20.0f, z ),
-                    new Vector3( 20.0f, 20.0f, z ),
-                    new Vector3( 0.0f, 20.0f, z ),
                     new Vector3( 0.0f, 20.0f, z ),
                     new Vector3( 20.0f, 0.0f, z ),
-                    new Vector3( 20.0f, 0.0f, z ),
-                    new Vector3( 0.0f, 0.0f, z ),
+                    new Vector3( 0.0f, 0.0f, z )
                 };
+                Vector3[] points = new Vector3[2 * rawPoints.Length - 2];
+                int j = 0;
+                for (int i = 0; i < rawPoints.Length; i++) // make points into line segments
+                {
+                    points[j] = rawPoints[i];
+                    j++;
+                    if (i > 0 && i < rawPoints.Length - 1) 
+                    {
+                        points[j] = rawPoints[i];
+                        j++;
+                    }
+                }
                 int[] ixs = new int[] {
                     0, 1, 2, 3, 4, 5, 6, 7
                 };

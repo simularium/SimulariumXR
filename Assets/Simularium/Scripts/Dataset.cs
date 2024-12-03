@@ -10,8 +10,10 @@ namespace Simularium
 
         public string name;
         public int totalSteps;
-        public int[] nAgents;
+        public int[] nMeshAgents;
+        public bool hasLines;
         public Color lineColor;
+        public float lineThickness;
         public List<FrameData> frames;
     }
 }

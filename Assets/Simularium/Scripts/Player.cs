@@ -31,7 +31,10 @@ namespace Simularium
 
         void OnEnable () 
         {
-            LoadLineRenderers();
+            if (dataset.hasLines) 
+            {
+                LoadLineRenderers();
+            }
 
             transformsBuffer = new ComputeBuffer( Dataset.MAX_AGENTS * 12, 4 );
             colorsBuffer = new ComputeBuffer( Dataset.MAX_AGENTS * 3, 4 );
@@ -60,12 +63,15 @@ namespace Simularium
 
         void SetCurrentFrame (int t)
         {
-            transformsBuffer.SetData( dataset.frames[t].transforms );
-            colorsBuffer.SetData( dataset.frames[t].colors );
+            transformsBuffer.SetData( dataset.frames[t].meshTransforms );
+            colorsBuffer.SetData( dataset.frames[t].meshColors );
             propertyBlock.SetBuffer( transformsId, transformsBuffer );
             propertyBlock.SetBuffer( colorsId, colorsBuffer );
 
-            lineRenderer.mesh = lineMeshes[t];
+            if (dataset.hasLines) 
+            {
+                lineRenderer.mesh = lineMeshes[t];
+            }
         }
 
         void Update () 
@@ -85,7 +91,7 @@ namespace Simularium
 
             Bounds bounds = new Bounds( Vector3.zero, 6f * Vector3.one );
             Graphics.DrawMeshInstancedProcedural(
-                mesh, 0, material, bounds, dataset.nAgents[currentStep], propertyBlock
+                mesh, 0, material, bounds, dataset.nMeshAgents[currentStep], propertyBlock
             );
         }
     }
