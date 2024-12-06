@@ -8,7 +8,7 @@ namespace Simularium
     {
         public static int MAX_AGENTS = 1000000;
 
-        public string name;
+        public string datasetName;
         public int totalSteps;
         public int[] nMeshAgents;
         public bool hasLines;

@@ -57,7 +57,7 @@ namespace Simularium
             lineMeshes = new Mesh[dataset.totalSteps];
             for (int t = 0; t < dataset.totalSteps; t++) 
             {
-                lineMeshes[t] = Resources.Load<Mesh>( dataset.name + "_Mesh_" + t );
+                lineMeshes[t] = Resources.Load<Mesh>( dataset.datasetName + "_Mesh_" + t );
             }
         }
 

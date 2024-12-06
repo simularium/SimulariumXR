@@ -71,7 +71,7 @@ namespace Simularium
                 string path = EditorUtility.OpenFilePanel( "Choose Simularium file", "", "simularium" );
                 if (path.Length != 0)
                 {
-                    error = Parser.ParseSimulariumFile( path );
+                    dataset = GenerateSimulariumData( path );
                 }
             }
             
@@ -86,20 +86,37 @@ namespace Simularium
             GUILayout.EndHorizontal();
         }
 
+        string ConfigureOutputPath ()
+        {
+            string outputPath = "Assets/Simularium/Data/";
+            if (!AssetDatabase.IsValidFolder( outputPath + "Resources" )) {
+                AssetDatabase.CreateFolder( "Assets/Simularium/Data", "Resources" );
+            }
+            return outputPath;
+        }
+
+        Dataset GenerateSimulariumData (string inputPath)
+        {
+            Dataset asset = ScriptableObject.CreateInstance<Dataset>();
+            string outputPath = ConfigureOutputPath();
+            asset.datasetName = Path.GetFileNameWithoutExtension( inputPath );
+            AssetDatabase.CreateAsset( asset, outputPath + asset.datasetName + ".asset" );
+            AssetDatabase.SaveAssets();
+
+            error = Parser.ParseSimulariumFile( inputPath, outputPath, asset );
+
+            AssetDatabase.SaveAssets();
+            EditorUtility.SetDirty( asset );
+
+            return asset;
+        }
+
         void ConvertColors () 
         {
             colors = new Color[hexColors.Length];
             for (int i = 0; i < hexColors.Length; i++)
             {
-                Color color;
-                if (ColorUtility.TryParseHtmlString( hexColors[i], out color ))
-                {
-                    colors[i] = color;
-                }
-                else 
-                {
-                    colors[i] = new Color( 1.0f, 1.0f, 1.0f, 1.0f );
-                }
+                colors[i] = Parser.ParseColor( hexColors[i] );
             }
         }
 
@@ -109,13 +126,10 @@ namespace Simularium
             int resolution = 10;
 
             Dataset asset = ScriptableObject.CreateInstance<Dataset>();
-            string path = "Assets/Simularium/Data/";
-            if (!AssetDatabase.IsValidFolder( path + "Resources" )) {
-                AssetDatabase.CreateFolder( "Assets/Simularium/Data", "Resources" );
-            }
+            string path = ConfigureOutputPath();
             AssetDatabase.CreateAsset( asset, path + "TestDataset.asset" );
 
-            asset.name = "TestDataset";
+            asset.datasetName = "TestDataset";
             asset.totalSteps = totalSteps;
             asset.nMeshAgents = new int[totalSteps];
             asset.hasLines = true;
