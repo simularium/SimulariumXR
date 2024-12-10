@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Simularium
 {
@@ -18,7 +19,7 @@ namespace Simularium
         [SerializeField]
         Mesh mesh;
 
-        Mesh[] lineMeshes;
+        Dictionary<string, Mesh[]> lineMeshes = new Dictionary<string, Mesh[]>();
         MeshFilter lineRenderer;
 
         float stepTime;
@@ -29,18 +30,28 @@ namespace Simularium
         ComputeBuffer transformsBuffer;
         ComputeBuffer colorsBuffer;
 
+        static Player _Instance;
+        public static Player Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = GameObject.FindObjectOfType<Player>();
+                }
+                return _Instance;
+            }
+        }
+
         void OnEnable () 
         {
-            if (dataset.hasLines) 
-            {
-                LoadLineRenderers();
-            }
-
             transformsBuffer = new ComputeBuffer( Dataset.MAX_AGENTS * 12, 4 );
             colorsBuffer = new ComputeBuffer( Dataset.MAX_AGENTS * 3, 4 );
             propertyBlock ??= new MaterialPropertyBlock();
 
-            SetCurrentFrame( 0 );
+            currentStep = 0;
+            LoadLineRenderers();
+            VisualizeCurrentStep();
         }
 
         void OnDisable () 
@@ -51,31 +62,68 @@ namespace Simularium
             colorsBuffer = null;
         }
 
-        void LoadLineRenderers ()
+        public void SetDataset (Dataset _dataset)
         {
-            lineRenderer = (Instantiate( Resources.Load( "LineMesh", typeof(GameObject) ) ) as GameObject).GetComponent<MeshFilter>();
-            lineMeshes = new Mesh[dataset.totalSteps];
-            for (int t = 0; t < dataset.totalSteps; t++) 
+            if (_dataset != dataset)
             {
-                lineMeshes[t] = Resources.Load<Mesh>( dataset.datasetName + "_Mesh_" + t );
+                dataset = _dataset;
+
+                currentStep = 0;
+                LoadLineRenderers();
+                VisualizeCurrentStep();
             }
         }
 
-        void SetCurrentFrame (int t)
+        void LoadLineRenderers ()
         {
-            transformsBuffer.SetData( dataset.frames[t].meshTransforms );
-            colorsBuffer.SetData( dataset.frames[t].meshColors );
+            if (dataset == null || !dataset.hasLines)
+            {
+                return;
+            }
+
+            // initialize renderer
+            if (lineRenderer == null)
+            {
+                lineRenderer = (Instantiate( Resources.Load( "LineMesh", typeof(GameObject) ) ) as GameObject).GetComponent<MeshFilter>();
+            }
+
+            // load line meshes if not already
+            if (lineMeshes.ContainsKey( dataset.datasetName ))
+            {
+                return;
+            }
+            lineMeshes[dataset.datasetName] = new Mesh[dataset.totalSteps];
+            for (int t = 0; t < dataset.totalSteps; t++) 
+            {
+                lineMeshes[dataset.datasetName][t] = Resources.Load<Mesh>( dataset.datasetName + "_Mesh_" + t );
+            }
+        }
+
+        void VisualizeCurrentStep ()
+        {
+            if (dataset == null)
+            {
+                return;
+            }
+
+            transformsBuffer.SetData( dataset.frames[currentStep].meshTransforms );
+            colorsBuffer.SetData( dataset.frames[currentStep].meshColors );
             propertyBlock.SetBuffer( transformsId, transformsBuffer );
             propertyBlock.SetBuffer( colorsId, colorsBuffer );
 
             if (dataset.hasLines) 
             {
-                lineRenderer.mesh = lineMeshes[t];
+                lineRenderer.mesh = lineMeshes[dataset.datasetName][currentStep];
             }
         }
 
         void Update () 
         {
+            if (dataset == null)
+            {
+                return;
+            }
+
             stepTime += Time.deltaTime;
             if (stepTime >= 1 / (float)targetFPS) 
             {
@@ -86,7 +134,7 @@ namespace Simularium
                     currentStep = 0;
                 }
 
-                SetCurrentFrame( currentStep );
+                VisualizeCurrentStep();
             }
 
             Bounds bounds = new Bounds( Vector3.zero, 6f * Vector3.one );
