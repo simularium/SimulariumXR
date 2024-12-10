@@ -37,7 +37,7 @@ namespace Simularium
             {
                 if (_Instance == null)
                 {
-                    _Instance = GameObject.FindObjectOfType<Player>();
+                    _Instance = FindAnyObjectByType<Player>();
                 }
                 return _Instance;
             }

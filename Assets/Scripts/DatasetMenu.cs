@@ -16,7 +16,7 @@ public class DatasetMenu : MonoBehaviour
         {
             if (_Instance == null)
             {
-                _Instance = GameObject.FindObjectOfType<DatasetMenu>();
+                _Instance = FindAnyObjectByType<DatasetMenu>();
             }
             return _Instance;
         }
@@ -45,7 +45,6 @@ public class DatasetMenu : MonoBehaviour
         for (int d = 0; d < datasets.Length; d++)
         {
             DatasetButton button = (Instantiate( buttonPrefab, scrollViewContent ) as GameObject).GetComponent<DatasetButton>();
-            button.transform.localPosition = new Vector3( d * 175f, -100f, 0 );
             button.SetDataset( datasets[d], d < 1 );
             if (d < 1)
             {
