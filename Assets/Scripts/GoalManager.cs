@@ -160,12 +160,12 @@ public class GoalManager : MonoBehaviour
 
     [Tooltip("The AR Template Menu Manager object to enable once the greeting prompt is dismissed.")]
     [SerializeField]
-    ARTemplateMenuManager m_MenuManager;
+    MenuManager m_MenuManager;
 
     /// <summary>
     /// The AR Template Menu Manager object to enable once the greeting prompt is dismissed.
     /// </summary>
-    public ARTemplateMenuManager menuManager
+    public MenuManager menuManager
     {
         get => m_MenuManager;
         set => m_MenuManager = value;

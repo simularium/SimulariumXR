@@ -23,6 +23,6 @@ public class DatasetButton : MonoBehaviour
 
     public void OnClick ()
     {
-        DatasetMenu.Instance.SetActiveButton( this );
+        MenuManager.Instance.SwitchDataset( this );
     }
 }

@@ -26,6 +26,7 @@ namespace Simularium
         int currentStep;
         [SerializeField]
         int targetFPS = 1;
+        bool playing = true;
 
         ComputeBuffer transformsBuffer;
         ComputeBuffer colorsBuffer;
@@ -74,6 +75,33 @@ namespace Simularium
             }
         }
 
+        public void Play ()
+        {
+            stepTime = 0;
+            playing = true;
+        }
+
+        public void Pause ()
+        {
+            playing = false;
+        }
+
+        public void IncrementStep (int direction)
+        {
+            stepTime = 0;
+            currentStep += direction;
+            if (currentStep >= dataset.totalSteps)
+            {
+                currentStep = 0;
+            }
+            if (currentStep < 0)
+            {
+                currentStep = dataset.totalSteps - 1;
+            }
+
+            VisualizeCurrentStep();
+        }
+
         void LoadLineRenderers ()
         {
             if (dataset == null || !dataset.hasLines)
@@ -84,7 +112,7 @@ namespace Simularium
             // initialize renderer
             if (lineRenderer == null)
             {
-                lineRenderer = (Instantiate( Resources.Load( "LineMesh", typeof(GameObject) ) ) as GameObject).GetComponent<MeshFilter>();
+                lineRenderer = (Instantiate( Resources.Load( "LineMesh", typeof(GameObject) ), transform ) as GameObject).GetComponent<MeshFilter>();
             }
 
             // load line meshes if not already
@@ -124,17 +152,13 @@ namespace Simularium
                 return;
             }
 
-            stepTime += Time.deltaTime;
-            if (stepTime >= 1 / (float)targetFPS) 
+            if (playing)
             {
-                stepTime = 0;
-                currentStep++;
-                if (currentStep >= dataset.totalSteps)
+                stepTime += Time.deltaTime;
+                if (stepTime >= 1 / (float)targetFPS) 
                 {
-                    currentStep = 0;
+                    IncrementStep( 1 );
                 }
-
-                VisualizeCurrentStep();
             }
 
             Bounds bounds = new Bounds( Vector3.zero, 6f * Vector3.one );
