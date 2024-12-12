@@ -103,6 +103,8 @@ namespace Simularium
             }
             int version = reader.ReadInt32();
             dataset.totalSteps = reader.ReadInt32();
+            dataset.timeStep = trajInfo.timeStepSize;
+            dataset.timeLabel = trajInfo.timeUnits.name;
             dataset.nMeshAgents = new int[dataset.totalSteps];
             dataset.frames = new List<FrameData>();
             reader.ReadBytes( dataset.totalSteps * 2 * 4 ); // skip frame offsets and lengths

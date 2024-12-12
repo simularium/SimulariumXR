@@ -10,6 +10,9 @@ namespace Simularium
 
         public string datasetName;
         public int totalSteps;
+        public float timeStep;
+        public string timeLabel;
+        public int targetFPS = 100;
         public int[] nMeshAgents;
         public bool hasLines;
         public Color lineColor;

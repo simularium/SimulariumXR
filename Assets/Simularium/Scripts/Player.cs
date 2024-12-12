@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 namespace Simularium
 {
@@ -24,12 +25,12 @@ namespace Simularium
 
         float stepTime;
         int currentStep;
-        [SerializeField]
-        int targetFPS = 1;
         bool playing = true;
 
         ComputeBuffer transformsBuffer;
         ComputeBuffer colorsBuffer;
+
+        public UnityEvent<int> timeUpdated = new UnityEvent<int>();
 
         static Player _Instance;
         public static Player Instance
@@ -98,6 +99,7 @@ namespace Simularium
             {
                 currentStep = dataset.totalSteps - 1;
             }
+            timeUpdated.Invoke( currentStep );
 
             VisualizeCurrentStep();
         }
@@ -106,6 +108,10 @@ namespace Simularium
         {
             if (dataset == null || !dataset.hasLines)
             {
+                if (lineRenderer != null)
+                {
+                    lineRenderer.mesh = null;
+                }
                 return;
             }
 
@@ -113,6 +119,9 @@ namespace Simularium
             if (lineRenderer == null)
             {
                 lineRenderer = (Instantiate( Resources.Load( "LineMesh", typeof(GameObject) ), transform ) as GameObject).GetComponent<MeshFilter>();
+                lineRenderer.transform.localPosition = Vector3.zero;
+                lineRenderer.transform.localRotation = Quaternion.identity;
+                lineRenderer.transform.localScale = Vector3.one;
             }
 
             // load line meshes if not already
@@ -155,7 +164,7 @@ namespace Simularium
             if (playing)
             {
                 stepTime += Time.deltaTime;
-                if (stepTime >= 1 / (float)targetFPS) 
+                if (stepTime >= 1 / (float)dataset.targetFPS) 
                 {
                     IncrementStep( 1 );
                 }

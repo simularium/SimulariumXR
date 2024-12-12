@@ -64,6 +64,7 @@ public class MenuManager : MonoBehaviour
     public GameObject pauseIcon;
     public TMP_Text currentTimeLabel;
     public TMP_Text totalTimeLabel;
+    public TMP_Text timeUnitsLabel;
 
     public Button stepForwardButton;
     public GameObject stepForwardEnabled;
@@ -100,9 +101,21 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+    Dataset currentDataset
+    {
+        get 
+        {
+            if (activeDatasetButton != null)
+            {
+                return activeDatasetButton.dataset;
+            }
+            return null;
+        }
+    }
+
     void OnEnable ()
     {
-        switchButton.onClick.AddListener( ShowMenu );
+        switchButton.onClick.AddListener( ToggleMenu );
         doneButton.onClick.AddListener( HideMenu );
         deleteButton.onClick.AddListener( DeleteAllObjects );
         planeManager.trackablesChanged.AddListener( OnPlaneChanged );
@@ -112,7 +125,7 @@ public class MenuManager : MonoBehaviour
     void OnDisable ()
     {
         showDatasetMenu = false;
-        switchButton.onClick.RemoveListener( ShowMenu );
+        switchButton.onClick.RemoveListener( ToggleMenu );
         doneButton.onClick.RemoveListener( HideMenu );
         deleteButton.onClick.RemoveListener( DeleteAllObjects );
         planeManager.trackablesChanged.RemoveListener( OnPlaneChanged );
@@ -166,6 +179,21 @@ public class MenuManager : MonoBehaviour
         SetStepButtons( false );
         SetSwitchButton( true );
         SetDeleteButton( true );
+        currentPlayer.timeUpdated.AddListener( UpdateTimeLabel );
+    }
+
+    void UpdateTimeLabel (int currentTimeIX)
+    {
+        if (currentDataset == null)
+        {
+            currentTimeLabel.text = currentTimeIX.ToString();
+            totalTimeLabel.text = "???";
+            timeUnitsLabel.text = "count";
+            return;
+        }
+        currentTimeLabel.text = (currentTimeIX * currentDataset.timeStep).ToString();
+        totalTimeLabel.text = ((currentDataset.totalSteps - 1) * currentDataset.timeStep).ToString();
+        timeUnitsLabel.text = currentDataset.timeLabel;
     }
 
     void GenerateDatasetButtons ()
@@ -229,14 +257,22 @@ public class MenuManager : MonoBehaviour
         stepBackwardDisabled.SetActive( !enable );
     }
 
-    void ShowMenu ()
+    void ToggleMenu ()
     {
-        showDatasetMenu = true;
-        if (!datasetMenuAnimator.GetBool( "Show" ))
+        if (showDatasetMenu)
         {
-            datasetMenuAnimator.SetBool( "Show", true );
+            HideMenu();
         }
-        SetDeleteButton( false );
+        else
+        {
+            showDatasetMenu = true;
+            if (!datasetMenuAnimator.GetBool( "Show" ))
+            {
+                datasetMenuAnimator.SetBool( "Show", true );
+            }
+            SetDeleteButton( false );
+        }
+        
     }
 
     public void HideMenu ()
@@ -316,6 +352,10 @@ public class MenuManager : MonoBehaviour
 
     public void DeleteAllObjects ()
     {
+        if (currentPlayer != null)
+        {
+            currentPlayer.timeUpdated.RemoveListener( UpdateTimeLabel );
+        }
         foreach (Transform child in spawner.transform)
         {
             Destroy( child.gameObject );

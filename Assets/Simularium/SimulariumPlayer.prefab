@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8189974519576698620}
@@ -49,6 +49,9 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: 7fbd19cc462be415592a3ad483eb4429, type: 2}
   mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   targetFPS: 100
+  timeUpdated:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4396678569685912752
 GameObject:
   m_ObjectHideFlags: 0
@@ -78,7 +81,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 0.6666667, y: 0.6666667, z: 0.6666667}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 450376134227136188}

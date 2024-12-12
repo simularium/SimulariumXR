@@ -131,6 +131,8 @@ namespace Simularium
 
             asset.datasetName = "TestDataset";
             asset.totalSteps = totalSteps;
+            asset.timeStep = 0.1f;
+            asset.timeLabel = "ns";
             asset.nMeshAgents = new int[totalSteps];
             asset.hasLines = true;
             asset.lineColor = new Color( 0.6f, 1.0f, 0.8f, 1.0f );
