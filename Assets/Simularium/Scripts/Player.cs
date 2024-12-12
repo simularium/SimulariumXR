@@ -10,7 +10,8 @@ namespace Simularium
 
         static readonly int
             transformsId = Shader.PropertyToID("_Transforms"),
-            colorsId = Shader.PropertyToID("_Colors");
+            colorsId = Shader.PropertyToID("_Colors"),
+            parentTransformId = Shader.PropertyToID("_ParentTransform");
 
         static MaterialPropertyBlock propertyBlock;
 
@@ -171,6 +172,7 @@ namespace Simularium
             }
 
             Bounds bounds = new Bounds( Vector3.zero, 6f * Vector3.one );
+            propertyBlock.SetMatrix( parentTransformId, transform.localToWorldMatrix );
             Graphics.DrawMeshInstancedProcedural(
                 mesh, 0, material, bounds, dataset.nMeshAgents[currentStep], propertyBlock
             );
