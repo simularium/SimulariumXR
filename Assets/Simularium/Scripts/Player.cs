@@ -54,6 +54,8 @@ namespace Simularium
 
             currentStep = 0;
             LoadLineRenderers();
+            transform.localScale = dataset.globalScale * Vector3.one;
+            
             VisualizeCurrentStep();
         }
 
@@ -73,6 +75,8 @@ namespace Simularium
 
                 currentStep = 0;
                 LoadLineRenderers();
+                transform.localScale = dataset.globalScale * Vector3.one;
+
                 VisualizeCurrentStep();
             }
         }

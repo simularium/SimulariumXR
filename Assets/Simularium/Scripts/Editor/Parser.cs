@@ -89,7 +89,7 @@ namespace Simularium
             }
             else 
             {
-                return Color.white;
+                return new Color( 254f / 255f, 227f / 255f, 77f / 255f, 1f );
             }
         }
 
@@ -153,7 +153,7 @@ namespace Simularium
                         {
                             frame.meshTransforms[12 * ix + v] = matrix[v % 4][Mathf.FloorToInt( v / 4f )];
                         }
-                        Color color = Color.white;
+                        Color color = new Color( 254f / 255f, 227f / 255f, 77f / 255f, 1f );
                         if (trajInfo != null && trajInfo.typeMapping.ContainsKey( typeID ))
                         {
                             color = ParseColor( trajInfo.typeMapping[typeID].geometry.color );

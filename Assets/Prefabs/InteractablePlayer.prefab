@@ -32,6 +32,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3238586325896359953}
   - {fileID: 3785151029983857447}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -234,12 +235,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5791257455029840295}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.33, z: 0}
   m_LocalScale: {x: 0.6666667, y: 0.6666667, z: 0.6666667}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 3785151029983857447}
+  m_Father: {fileID: 6774938105079062643}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7847862837086012992
 MeshFilter:
@@ -344,8 +345,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.33, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 3238586325896359953}
+  m_Children: []
   m_Father: {fileID: 6774938105079062643}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4172744317928450524
@@ -360,7 +360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3219cead93c6048dea7fbbf0629a55db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataset: {fileID: 11400000, guid: 1a79543e8b3c44c19b71da02f929a7c5, type: 2}
+  dataset: {fileID: 11400000, guid: e076445584bf843219fdff0625efc05b, type: 2}
   material: {fileID: 2100000, guid: 7fbd19cc462be415592a3ad483eb4429, type: 2}
   mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   timeUpdated:

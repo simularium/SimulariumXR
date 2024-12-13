@@ -18,5 +18,6 @@ namespace Simularium
         public Color lineColor;
         public float lineThickness;
         public List<FrameData> frames;
+        public float globalScale = 1f;
     }
 }
