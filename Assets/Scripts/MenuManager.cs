@@ -136,8 +136,6 @@ public class MenuManager : MonoBehaviour
     {
         GenerateDatasetButtons();
         planeManager.planePrefab = debugPlane;
-        SetSwitchButton( false );
-        SetDeleteButton( false );
         playbackControls.SetActive( false );
     }
 
@@ -171,15 +169,18 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    void PlayerSpawned (GameObject player)
+    void PlayerSpawned (GameObject _)
     {
         playbackControls.SetActive( true );
         playIcon.SetActive( false );
         pauseIcon.SetActive( true );
         SetStepButtons( false );
-        SetSwitchButton( true );
-        SetDeleteButton( true );
         currentPlayer.timeUpdated.AddListener( UpdateTimeLabel );
+        Player player = currentPlayer;
+        if (player != null)
+        {
+            player.SetDataset( activeDatasetButton.dataset );
+        }
     }
 
     void UpdateTimeLabel (int currentTimeIX)
@@ -226,25 +227,7 @@ public class MenuManager : MonoBehaviour
             {
                 player.SetDataset( activeDatasetButton.dataset );
             }
-            else
-            {
-                Debug.LogWarning( "Simularium player not found when switching dataset." );
-            }
         }
-    }
-
-    void SetSwitchButton (bool enable)
-    {
-        switchButton.interactable = enable;
-        switchButtonEnabled.SetActive( enable );
-        switchButtonDisabled.SetActive( !enable );
-    }
-
-    void SetDeleteButton (bool enable)
-    {
-        deleteButton.interactable = enable;
-        deleteButtonEnabled.SetActive( enable );
-        deleteButtonDisabled.SetActive( !enable );
     }
 
     void SetStepButtons (bool enable)
@@ -270,7 +253,6 @@ public class MenuManager : MonoBehaviour
             {
                 datasetMenuAnimator.SetBool( "Show", true );
             }
-            SetDeleteButton( false );
         }
         
     }
@@ -280,8 +262,6 @@ public class MenuManager : MonoBehaviour
         datasetMenuAnimator.SetBool( "Show", false );
         showDatasetMenu = false;
         bool havePlayer = currentPlayer != null;
-        SetSwitchButton( havePlayer );
-        SetDeleteButton( havePlayer );
     }
 
     public void TogglePlay ()
@@ -361,8 +341,6 @@ public class MenuManager : MonoBehaviour
             Destroy( child.gameObject );
         }
         playbackControls.SetActive( false );
-        SetSwitchButton( false );
-        SetDeleteButton( false );
     }
 
     public void ShowHideModal ()
