@@ -182,17 +182,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: SimulariumPlayer
       objectReference: {fileID: 0}
-    - target: {fileID: 450376134227136191, guid: b53f6dd54af0f444f9a3a40a126c1d80,
-        type: 3}
-      propertyPath: mesh
-      value: 
-      objectReference: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-    - target: {fileID: 450376134227136191, guid: b53f6dd54af0f444f9a3a40a126c1d80,
-        type: 3}
-      propertyPath: dataset
-      value: 
-      objectReference: {fileID: 11400000, guid: 1a79543e8b3c44c19b71da02f929a7c5,
-        type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

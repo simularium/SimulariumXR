@@ -48,7 +48,6 @@ MonoBehaviour:
   dataset: {fileID: 11400000, guid: 1a79543e8b3c44c19b71da02f929a7c5, type: 2}
   material: {fileID: 2100000, guid: 7fbd19cc462be415592a3ad483eb4429, type: 2}
   mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-  targetFPS: 100
   timeUpdated:
     m_PersistentCalls:
       m_Calls: []
@@ -101,7 +100,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4396678569685912752}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
